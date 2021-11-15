@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>DotNet_API.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9" />
+
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DotNet-API.Application\DotNet-API.Application.csproj" />
+      <ProjectReference Include="..\DotNet-API.Domain\DotNet-API.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
