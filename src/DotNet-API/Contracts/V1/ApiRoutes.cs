@@ -18,5 +18,12 @@
 
             public const string Put = Base + "/post/{postId}";
         }
+        
+        public static class Indentity
+        {
+            public const string Login = Base + "identity/login";
+
+            public const string Register = Base + "identity/register";
+        }
     }
 }
