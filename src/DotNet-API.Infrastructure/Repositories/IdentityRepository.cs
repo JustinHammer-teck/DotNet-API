@@ -16,12 +16,38 @@ namespace DotNet_API.Infrastructure.Repositories
     public class IdentityRepository : IIdentityRepository
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly JwtSettings _jwtSettings; 
+        private readonly JwtSettings _jwtSettings;
+
         public IdentityRepository(UserManager<IdentityUser> userManager,
             JwtSettings jwtSettings)
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings;
+        }
+
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthenticationResult()
+                {
+                    Errors = new[] {"User does not exist"}
+                };
+            }
+
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!userHasValidPassword)
+            {
+                return new AuthenticationResult()
+                {
+                    Errors = new[] {"User/password is wrong"}
+                };
+            }
+
+            return GenerateAuthenticationResultForUser(user);
         }
 
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
@@ -32,7 +58,7 @@ namespace DotNet_API.Infrastructure.Repositories
             {
                 return new AuthenticationResult()
                 {
-                    Errors = new[] {"User with this email is already existed"}
+                    Errors = new[] {"User with this Email is already exist"}
                 };
             }
 
@@ -41,31 +67,36 @@ namespace DotNet_API.Infrastructure.Repositories
                 Email = email,
                 UserName = email
             };
-
             var createUser = await _userManager.CreateAsync(newUser, password);
 
             if (!createUser.Succeeded)
             {
-                return new AuthenticationResult
+                return new AuthenticationResult()
                 {
                     Errors = createUser.Errors.Select(x => x.Description)
                 };
             }
 
+            return GenerateAuthenticationResultForUser(newUser);
+        }
+
+        private AuthenticationResult GenerateAuthenticationResultForUser(IdentityUser newUser)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new []
+                Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub , newUser.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                    new Claim("id" , newUser.Id)
+                    new Claim("id", newUser.Id)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials =
+                    new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 

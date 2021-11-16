@@ -5,6 +5,9 @@ namespace DotNet_API.Application.Repositories
 {
     public interface IIdentityRepository
     {
+        
+        Task<AuthenticationResult> LoginAsync(string email, string password);
+
         Task<AuthenticationResult> RegisterAsync(string email, string password);
     }
 }
