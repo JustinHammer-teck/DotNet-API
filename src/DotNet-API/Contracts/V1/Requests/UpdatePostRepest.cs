@@ -2,6 +2,6 @@
 {
     public class UpdatePostRepest
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using DotNet_API.Contracts.V1;
 using DotNet_API.Contracts.V1.Requests;
 using DotNet_API.Contracts.V1.Responses;
 using DotNet_API.Domain.Entities;
+using DotNet_API.Extensions;
+using DotNet_API.Infrastructure.Repositories;
 using DotNet_API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -45,11 +47,16 @@ namespace DotNet_API.Controllers.V1
         [HttpPut(ApiRoutes.Posts.Put)]
         public async Task<IActionResult> Put([FromRoute] Guid postId, [FromBody] UpdatePostRepest request)
         {
-            var post = new Post
+            var userOwnsPost = await _postRepository.UserOwnsPostAsync(postId, HttpContext.GetUserId());
+
+            if (!userOwnsPost)
             {
-                Id = postId,
-                Title = request.Name,
-            };
+                return BadRequest(new {error = "You do not own this Post"});
+            }
+
+            var post = await _postRepository.GetPostByIdAsync(postId);
+            post.Title = request.Title;
+
             var updated = await _postRepository.UpdatePostAsync(post);
             if (updated) return Ok();
             return NotFound();
@@ -58,6 +65,13 @@ namespace DotNet_API.Controllers.V1
         [HttpDelete(ApiRoutes.Posts.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid postId)
         {
+            var userOwnsPost = await _postRepository.UserOwnsPostAsync(postId, HttpContext.GetUserId());
+
+            if (!userOwnsPost)
+            {
+                return BadRequest(new {error = "You do not own this Post"});
+            }
+            
             var deleted = await _postRepository.DeletePostAsync(postId);
             if (deleted) return NoContent();
             return NotFound();
@@ -66,8 +80,12 @@ namespace DotNet_API.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Post)]
         public async Task<IActionResult> Post([FromBody] CreatePostRequest postRequest)
         {
-            var post = new Post() {Title = postRequest.Title};
-            
+            var post = new Post()
+            {
+                Title = postRequest.Title,
+                UserId = HttpContext.GetUserId()
+            };
+
             await _postRepository.CreatePostAsync(post);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";

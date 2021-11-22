@@ -12,5 +12,6 @@ namespace DotNet_API.Repositories
         Task<bool> CreatePostAsync(Post post);
         Task<bool> UpdatePostAsync(Post postToUpdate);
         Task<bool> DeletePostAsync(Guid postId);
+        Task<bool> UserOwnsPostAsync(Guid postId, string getUserId);
     }
 }

@@ -10,5 +10,6 @@ namespace DotNet_API.Infrastructure.Data
         {
         }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
