@@ -213,12 +213,14 @@ namespace DotNet_API.Infrastructure.Repositories
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var refreshToken = new RefreshToken()
             {
+                Token = Guid.NewGuid().ToString(),
                 JwtId = token.Id,
                 UserId = user.Id,
                 CreationDate = DateTime.Now,
                 ExpiredDate = DateTime.UtcNow.AddMonths(6)
             };
             await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            await _dbContext.SaveChangesAsync();
             return new AuthenticationResult()
             {
                 Success = true,

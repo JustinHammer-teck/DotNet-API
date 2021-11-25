@@ -1,6 +1,6 @@
 ﻿using DotNet_API.Application.Repositories;
 using DotNet_API.Infrastructure.Repositories;
-using DotNet_API.Repositories;
+using DotNet_API.Application.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

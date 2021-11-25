@@ -8,7 +8,7 @@ using DotNet_API.Contracts.V1.Responses;
 using DotNet_API.Domain.Entities;
 using DotNet_API.Extensions;
 using DotNet_API.Infrastructure.Repositories;
-using DotNet_API.Repositories;
+using DotNet_API.Application.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

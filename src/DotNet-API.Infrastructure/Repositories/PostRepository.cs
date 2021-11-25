@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet_API.Domain.Entities;
 using DotNet_API.Infrastructure.Data;
-using DotNet_API.Repositories;
+using DotNet_API.Application.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNet_API.Infrastructure.Repositories

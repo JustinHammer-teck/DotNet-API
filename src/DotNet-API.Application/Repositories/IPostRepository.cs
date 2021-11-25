@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNet_API.Domain.Entities;
 
-namespace DotNet_API.Repositories
+namespace DotNet_API.Application.Repositories
 {
     public interface IPostRepository
     {
